@@ -4,9 +4,7 @@ This project is centered on reviewing sales data and producing a summary of info
 
 ***Data Input***
 
-The script operates with a CSV file with sales data. Replace the placeholder file path in the script with the actual path to your CSV file:
-
-**df = pd.read_csv('C:/Users/dell/Documents/Python/itemsales.csv')**
+The script operates with a CSV file with sales data. 
 
 Csv contain below columns 
 
@@ -24,10 +22,7 @@ Adapts the column names to obtain expected names when alignment is necessary.
 ***Data Type Conversion***:
 Coverts ITEM CODE and Quantity Sold to string.
 
-Erases commas in the Amount column and makes this column numeric.
 
-***Handling Missing Data***: 
-We also use the dataframe function to find the rows with the missing values and subsequently drop these rows.
 
 ***Top 10 Products by Quantity***: The collected data is grouped by ITEM CODE, the Quantity Sold is summed up and the first ten products in the list are chosen.
 
