@@ -1,32 +1,18 @@
-# Databricks notebook source
-# MAGIC %md
-# MAGIC
-# MAGIC ## Overview
-# MAGIC
-# MAGIC This notebook will show you how to create and query a table or DataFrame that you uploaded to DBFS. [DBFS](https://docs.databricks.com/user-guide/dbfs-databricks-file-system.html) is a Databricks File System that allows you to store data for querying inside of Databricks. This notebook assumes that you have a file already inside of DBFS that you would like to read from.
-# MAGIC
-# MAGIC This notebook is written in **Python** so the default cell type is Python. However, you can use different languages by using the `%LANGUAGE` syntax. Python, Scala, SQL, and R are all supported.
-
-# COMMAND ----------
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
-# COMMAND ----------
-
 # File location and type
 file_location = "/FileStore/tables/itemsales__1_.csv"
 file_type = "csv"
 
-# CSV options
+
 infer_schema = "false"
 first_row_is_header = "True"
 delimiter = ","
 
-# The applied options are for CSV files. For other file types, these will be ignored.
-sparkdf = spark.read.format(file_type) \
+
   .option("inferSchema", infer_schema) \
   .option("header", first_row_is_header) \
   .option("sep", delimiter) \
@@ -34,41 +20,30 @@ sparkdf = spark.read.format(file_type) \
 
 display(df)
 
-# COMMAND ----------
+#converting spark dataframe in pandas dataframe
 
 df = sparkdf.toPandas()
 
-# COMMAND ----------
 
 
-
-# Print column names to check if they match expectations
+# Print column names for verification 
 print(df.columns)
 
-# Rename columns if necessary (replace with your actual column names)
+#rename column to achive consitency 
 df = df.rename(columns={'Item': 'ITEM CODE',
 'Qty. Sold': 'Quantity Sold',
 'Total Revenue': 'Amount'})
 print(df.columns)
 
-# COMMAND ----------
-
+# check data types 
 df.dtypes
-
-# COMMAND ----------
-
+# converting in to proper data types 
 df['ITEM CODE'] = df['ITEM CODE'].astype(str)  # Convert ITEM CODE to string
 df['Quantity Sold'] = pd.to_numeric(df['Quantity Sold'], errors='coerce')  # Convert Quantity Sold to numeric
 df['Amount'] = df['Amount'].replace({',': ''}, regex=True).astype(float)
 
-
-# COMMAND ----------
-
+#verifying data types after conversion 
 df.dtypes
-
-# COMMAND ----------
-
-
 
 # Calculate Total Revenue per product
 df['Total Revenue'] = df['Quantity Sold'] * df['Amount']
@@ -86,7 +61,8 @@ print(top_10_revenue)
 plt.figure(figsize=(10, 6))
 sns.barplot(data=top_10_revenue, x='ITEM CODE', y='Total Revenue', palette='viridis')
 
-# Add titles and labels
+#adding labels to plot 
+
 plt.title('Top 10 Products by Revenue')
 plt.xlabel('ITEM CODE')
 plt.ylabel('Total Revenue')
@@ -99,9 +75,6 @@ plt.tight_layout()
 
 # Show the plot
 plt.show()
-
-# COMMAND ----------
-
 
 top_10_quantity = df.groupby('ITEM CODE').agg({'Quantity Sold': 'sum'}).reset_index()
 
